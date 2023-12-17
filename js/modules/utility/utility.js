@@ -18,3 +18,28 @@ export const splitDate = date => {
     year,
   };
 };
+
+export const limitedArticles = (data, rowItems, endPoint = 0) => {
+  const {articles} = data;
+  const remainer = articles.length % rowItems;
+
+  let midResult = [];
+  if (remainer === 0) midResult = articles;
+  const newSize = articles.length - remainer;
+
+  const newArr = [];
+  for (let i = 0; i < newSize; i++) {
+    newArr[i] = midResult[i];
+  }
+
+  const finalArr = [];
+
+  if (endPoint > 0) {
+    for (let i = 0; i < endPoint; i++) {
+      finalArr[i] = newArr[i];
+    }
+    return finalArr;
+  } else {
+    return newArr;
+  }
+};

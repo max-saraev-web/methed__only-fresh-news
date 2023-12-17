@@ -43,11 +43,31 @@ const createHeader = (parent) => {
   indicator.classList.add('header__search-indicator');
   const headerSelect = document.createElement('select');
   headerSelect.classList.add('header__search-select');
-  const selectOption = document.createElement('option');
-  selectOption.value = 'ru';
-  selectOption.classList.add('header__search-option');
-  selectOption.textContent = 'Россия';
-  headerSelect.append(selectOption);
+
+  const optionKeys = [
+    {
+      key: 'Россия',
+      value: 'ru',
+    },
+    {
+      key: 'Австралия',
+      value: 'au',
+    },
+    {
+      key: 'Великобритания',
+      value: 'gb',
+    },
+  ];
+
+  const options = optionKeys.map(elem => {
+    const selectOption = document.createElement('option');
+    selectOption.value = elem.value;
+    selectOption.classList.add('header__search-option');
+    selectOption.textContent = elem.key;
+    return selectOption;
+  });
+
+  headerSelect.append(...options);
   headerSelectWrap.append(headerSelect, indicator);
   // !select-end
 

@@ -3,14 +3,23 @@ import renderCard from '../render/renderCard.js';
 import renderFooter from '../render/renderFooter.js';
 import createHeader from '../render/renderHeader.js';
 import renderMain from '../render/renderMain.js';
+import {limitedArticles} from '../utility/utility.js';
 
 
-const SEARCH_URL = 'https://newsapi.org/v2/everything?q=';
+// const SEARCH_URL = 'https://newsapi.org/v2/everything?q=';
+const SEARCH_URL = '/search.json';
 
 
-const headerControl = (parent) => {
+const headerControl = (parent, rowItems) => {
   const header = createHeader(parent);
-  const {form} = header;
+  const {form, headerSelect} = header;
+
+  let lang = headerSelect.value;
+
+  headerSelect.addEventListener('change', ({target}) => {
+    lang = target.value;
+    console.log(lang);
+  });
 
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
@@ -22,12 +31,20 @@ const headerControl = (parent) => {
       removeElems.remove();
       removeFooter.remove();
 
-      const data = await fetchRequest(SEARCH_URL + `{${val}}`, {
+      const data = await fetchRequest(SEARCH_URL, {
         method: 'GET',
         headers: {
           'X-Api-Key': '4c200be121114cb3a3e43c38e8d23c4c',
         },
       });
+      // const data = await fetchRequest(SEARCH_URL + `{${val}}`, {
+      //   method: 'GET',
+      //   headers: {
+      //     'X-Api-Key': '4c200be121114cb3a3e43c38e8d23c4c',
+      //   },
+      // });
+
+      const newData = limitedArticles(data, rowItems, 8);
 
       const mainReturn = renderMain(parent);
       const {
@@ -38,7 +55,7 @@ const headerControl = (parent) => {
       title.textContent = `По вашему запросу “${val}” найдено 
         ${data.totalResults} результатов`;
 
-      data.articles.forEach(elem => {
+      newData.forEach(elem => {
         const newCard = new Promise(resolve => {
           resolve(renderCard(elem));
         });
@@ -48,6 +65,9 @@ const headerControl = (parent) => {
       renderFooter(parent);
     }
   });
+  return {
+    lang
+  };
 };
 
 export default headerControl;
