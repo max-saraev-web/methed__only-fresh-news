@@ -1,33 +1,15 @@
-import createContainer from './renderContainer.js';
+import createContentFrame from './createContentFrame.js';
+import createHeadLine from './createHeadLine.js';
 
 const renderMain = (selector, titleContent = 'Свежие новости') => {
-  const main = document.createElement('main');
-  main.classList.add('main');
+  const {headLine, title} = createHeadLine(titleContent);
 
-  const headLine = document.createElement('div');
-  headLine.classList.add('main__headline');
+  const {content} = createContentFrame();
 
-  const container = createContainer();
-  headLine.headlineContainer = container;
-
-  const title = document.createElement('h1');
-  title.classList.add('main-title');
-  title.textContent = titleContent;
-
-  const content = document.createElement('section');
-  content.classList.add('main__content');
-  const contentContainer = createContainer();
-  content.contentContainer = contentContainer;
-  content.append(contentContainer);
-
-
-  headLine.append(container);
-  headLine.headlineContainer.append(title);
-  main.append(headLine, content);
-  selector.append(main);
+  selector.append(headLine, content);
 
   return {
-    main,
+    selector,
     title,
     contentBlock: content.contentContainer,
   };

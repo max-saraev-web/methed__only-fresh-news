@@ -1,6 +1,6 @@
 import {splitDate} from '../utility/utility.js';
 
-const renderCard = ({
+const renderCard = async ({
   urlToImage,
   title: cardTitle,
   description,
@@ -21,7 +21,6 @@ const renderCard = ({
   img.src = `
     ${typeof urlToImage !== 'string' ?
   '../../../img/card/placeholder.jpg' : urlToImage}
-
   `;
 
   const arrow = document.createElement('img');
@@ -79,8 +78,28 @@ const renderCard = ({
 
   postBlock.append(dateBlock, authorName);
   block.append(arrow, title, descr, postBlock);
-  card.append(img, block);
 
+  const checkImage = async () => new Promise((resolve, reject) => {
+    img.addEventListener('load', () => {
+      resolve(img);
+    });
+
+    img.addEventListener('error', () => {
+      reject(img);
+    });
+  });
+
+  const loadedCard = async () => {
+    try {
+      const img = await checkImage();
+      card.append(img, block);
+    } catch (error) {
+      img.src = '../../../img/card/placeholder.jpg';
+      card.append(img, block);
+    }
+  };
+
+  loadedCard();
   return card;
 };
 
