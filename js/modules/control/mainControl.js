@@ -5,14 +5,11 @@ import renderMain from '../render/renderMain.js';
 import {limitedArticles} from '../utility/utility.js';
 
 const mainControl = async (selector, url, rowItems) => {
-  const mainReturn = renderMain(selector);
-  const {
-    main,
-    title,
-    contentBlock: block} = mainReturn;
+  const {contentBlock: block} = renderMain(selector);
 
   const overlay = createLoader();
-  block.append(overlay);
+
+  selector.append(overlay.overlay);
 
   const data = await fetchRequest(url, {
     method: 'GET',
@@ -20,16 +17,14 @@ const mainControl = async (selector, url, rowItems) => {
       'X-Api-Key': '4c200be121114cb3a3e43c38e8d23c4c',
     },
   });
-  if (data) overlay.remove();
   const newData = limitedArticles(data, rowItems, 8);
 
-
-  newData.forEach(elem => {
-    const newCard = new Promise(resolve => {
-      resolve(renderCard(elem));
+  Promise.all(newData.map(async elem => await renderCard(elem)))
+    .then(cards => {
+      overlay.stopAnimation();
+      overlay.overlay.remove();
+      cards.forEach(card => block.append(card));
     });
-    newCard.then(card => block.append(card));
-  });
 };
 
 export default mainControl;

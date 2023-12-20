@@ -24,7 +24,11 @@ export const limitedArticles = (data, rowItems, endPoint = 0) => {
   const remainer = articles.length % rowItems;
 
   let midResult = [];
-  if (remainer === 0) midResult = articles;
+  if (remainer === 0) {
+    midResult = articles;
+  } else {
+    midResult = articles.slice(0, endPoint);
+  }
   const newSize = articles.length - remainer;
 
   const newArr = [];

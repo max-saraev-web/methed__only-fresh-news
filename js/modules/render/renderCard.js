@@ -1,13 +1,13 @@
 import {splitDate} from '../utility/utility.js';
 
-const renderCard = async ({
+const renderCard = ({
   urlToImage,
   title: cardTitle,
   description,
   url,
   publishedAt,
   author,
-}) => {
+}) => new Promise(resolve => {
   const card = document.createElement('article');
   card.classList.add('card');
 
@@ -18,10 +18,11 @@ const renderCard = async ({
 
   const img = document.createElement('img');
   img.classList.add('card__image');
-  img.src = `
-    ${typeof urlToImage !== 'string' ?
-  '../../../img/card/placeholder.jpg' : urlToImage}
-  `;
+  img.src = urlToImage;
+  // img.src = `
+  //   ${typeof urlToImage !== 'string' ?
+  // '../../../img/card/placeholder.jpg' : urlToImage}
+  // `;
 
   const arrow = document.createElement('img');
   arrow.classList.add('card__arrow');
@@ -79,28 +80,16 @@ const renderCard = async ({
   postBlock.append(dateBlock, authorName);
   block.append(arrow, title, descr, postBlock);
 
-  const checkImage = async () => new Promise((resolve, reject) => {
-    img.addEventListener('load', () => {
-      resolve(img);
-    });
-
-    img.addEventListener('error', () => {
-      reject(img);
-    });
+  img.addEventListener('load', () => {
+    card.append(img, block);
+    resolve(card);
   });
 
-  const loadedCard = async () => {
-    try {
-      const img = await checkImage();
-      card.append(img, block);
-    } catch (error) {
-      img.src = '../../../img/card/placeholder.jpg';
-      card.append(img, block);
-    }
-  };
-
-  loadedCard();
-  return card;
-};
+  img.addEventListener('error', () => {
+    img.src = '../../../img/card/placeholder.jpg';
+    card.append(img, block);
+    resolve(card);
+  });
+});
 
 export default renderCard;

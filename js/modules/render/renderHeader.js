@@ -75,6 +75,7 @@ const createHeader = (parent) => {
   parent.append(header);
 
   return {
+    header,
     container: header.contaier,
     logo,
     form: searchWrap,
