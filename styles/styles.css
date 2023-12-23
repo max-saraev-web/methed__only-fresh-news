@@ -496,6 +496,12 @@ body{
 /* card-start */
 .card{
   max-width: 270px;
+  position: relative;
+}
+.card .overlay{
+  width: 270px;
+  height: 200px;
+  top: 0;
 }
 .card__block{
   display: flex;
